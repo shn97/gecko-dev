@@ -1,0 +1,52 @@
+diff -r a12315712bb1 toolkit/components/thumbnails/PageThumbs.jsm
+--- a/toolkit/components/thumbnails/PageThumbs.jsm	Mon Sep 16 16:52:01 2019 -0400
++++ b/toolkit/components/thumbnails/PageThumbs.jsm	Tue Nov 12 14:50:44 2019 -0500
+@@ -32,9 +32,7 @@
+ 
+ XPCOMUtils.defineLazyModuleGetters(this, {
+   Services: "resource://gre/modules/Services.jsm",
+-  FileUtils: "resource://gre/modules/FileUtils.jsm",
+   PlacesUtils: "resource://gre/modules/PlacesUtils.jsm",
+-  Deprecated: "resource://gre/modules/Deprecated.jsm",
+   AsyncShutdown: "resource://gre/modules/AsyncShutdown.jsm",
+   PageThumbUtils: "resource://gre/modules/PageThumbUtils.jsm",
+   PrivateBrowsingUtils: "resource://gre/modules/PrivateBrowsingUtils.jsm",
+@@ -750,16 +748,6 @@
+       }
+     };
+   },
+-
+-  // Deprecated, please do not use
+-  getFileForURL: function Storage_getFileForURL_DEPRECATED(aURL) {
+-    Deprecated.warning(
+-      "PageThumbs.getFileForURL is deprecated. Please use PageThumbs.getFilePathForURL and OS.File",
+-      "https://developer.mozilla.org/docs/JavaScript_OS.File"
+-    );
+-    // Note: Once this method has been removed, we can get rid of the dependency towards FileUtils
+-    return new FileUtils.File(PageThumbsStorageService.getFilePathForURL(aURL));
+-  },
+ };
+ 
+ var PageThumbsStorageMigrator = {
+diff -r a12315712bb1 toolkit/components/thumbnails/test/browser_thumbnails_storage_migrate3.js
+--- a/toolkit/components/thumbnails/test/browser_thumbnails_storage_migrate3.js	Mon Sep 16 16:52:01 2019 -0400
++++ b/toolkit/components/thumbnails/test/browser_thumbnails_storage_migrate3.js	Tue Nov 12 14:50:44 2019 -0500
+@@ -73,18 +73,6 @@
+     "no-overwrite-plz",
+     "existing thumbnail was not overwritten"
+   );
+-
+-  // Sanity check: ensure that, until it is removed, deprecated
+-  // function |getFileForURL| points to the same path as
+-  // |getFilePathForURL|.
+-  if ("getFileForURL" in PageThumbsStorage) {
+-    file = PageThumbsStorage.getFileForURL(URL);
+-    is(
+-      file.path,
+-      PageThumbsStorageService.getFilePathForURL(URL),
+-      "Deprecated getFileForURL and getFilePathForURL return the same path"
+-    );
+-  }
+ }
+ 
+ function changeLocation(aLocation, aNewDir) {
